@@ -1,5 +1,4 @@
 version: "3.7"
-
 services:
     app:
         build:
@@ -12,7 +11,7 @@ services:
         restart: unless-stopped
         working_dir: /var/www/
         volumes:
-            -   ./:/var/www
+            - ./:/var/www
         depends_on:
             - redis
             - queue
@@ -23,7 +22,7 @@ services:
         image: nginx:alpine
         restart: unless-stopped
         ports:
-            -  '80:80'
+            - 8989:80
         volumes:
             - ./:/var/www
             - ./docker/nginx/:/etc/nginx/conf.d/
@@ -31,7 +30,7 @@ services:
             - laravel
 
     mysql:
-        image: mysql:5.7.4
+        image: mysql:5.7.22
         restart: unless-stopped
         environment:
             MYSQL_DATABASE: ${DB_DATABASE}
@@ -40,13 +39,15 @@ services:
             MYSQL_USER: ${DB_USERNAME}
         volumes:
             - ./.docker/mysql/dbdata:/var/lib/mysql
+        ports:
+            - 3388:3306
         networks:
             - laravel
 
     queue:
         build:
             args:
-                user: lucas
+                user: carlos
                 uid: 1000
             context: ./
             dockerfile: Dockerfile
